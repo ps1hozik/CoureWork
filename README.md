@@ -1,8 +1,5 @@
 # CoureWork
 
-Python:
--FastAPI
--SQLAlchemy
+Python: FastAPI, SQLAlchemy
 
-DataBase:
--PostgreSQL
+DataBase: PostgreSQL
