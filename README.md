@@ -1,5 +1,6 @@
-# CoureWork
+# CourseWork
 
-Python: FastAPI, SQLAlchemy
-
-DataBase: PostgreSQL
+Back-end:
+  Python: FastAPI, SQLAlchemy
+  
+  DataBase: PostgreSQL
