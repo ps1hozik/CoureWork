@@ -4,8 +4,8 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from main import Base
-from user import User
+from .base import Base
+
 
 
 class Organization(Base):
@@ -16,6 +16,8 @@ class Organization(Base):
     code: Mapped[str] = mapped_column(unique=True)
     description: Mapped[Optional[str]] = mapped_column()
     count_of_warehouses: Mapped[int] = mapped_column(default=0)
-    manager_id: Mapped[int] = mapped_column(ForeignKey("User.id"))
+    manager_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
-    parent: Mapped[User] = relationship(back_populates="children")
+    warehouses: Mapped["Warehouse"] = relationship(back_populates="parent")
+
+    manager: Mapped["User"] = relationship(back_populates="children")

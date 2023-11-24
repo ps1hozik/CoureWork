@@ -10,4 +10,4 @@ def get_user():
 
 @router.get("/{user_id}")
 def get_user_by_id(user_id: int):
-    pass
+    return {"i": "h"}

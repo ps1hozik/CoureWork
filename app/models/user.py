@@ -1,8 +1,8 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from main import Base
-from organization import Organization
+from .base import Base
+
 
 
 class User(Base):
@@ -14,4 +14,6 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column()
     post: Mapped[str] = mapped_column(String(255), index=True)
 
-    children: Mapped[Organization] = relationship(back_populates="parent")
+    organizations: Mapped["Organization"] = relationship(back_populates="parent")
+    warehouses: Mapped["Warehouse"] = relationship(back_populates="parent")
+    products: Mapped["Product"] = relationship(back_populates="parent")
