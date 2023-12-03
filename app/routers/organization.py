@@ -13,15 +13,14 @@ router = APIRouter()
 
 @router.post("/", response_model=OrganizationCreate, status_code=201)
 def create(data: OrganizationCreate, db: Session = Depends(get_db)):
-    
     return organization.create(data=data, db=db)
 
 
-@router.patch("/", response_model=OrganizationUpdate)
-def update():
-    ...
+@router.patch("/{code}", response_model=OrganizationUpdate)
+def update(code: str, data: OrganizationUpdate, db: Session = Depends(get_db)):
+    return organization.update(code=code, data=data, db=db)
 
 
-@router.get("/{id}", response_model=OrganizationGet)
-def get_by_id():
-    ...
+@router.get("/{code}")
+def get_by_code(code: str, db: Session = Depends(get_db)):
+    return organization.get(db=db, code=code)

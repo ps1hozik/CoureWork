@@ -4,9 +4,7 @@ from pydantic import BaseModel
 
 
 class OrganizationGet(BaseModel):
-    name: str
     code: str
-    description: Optional[str]
 
     class Config:
         from_attributes = True

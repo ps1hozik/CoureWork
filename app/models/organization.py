@@ -14,7 +14,7 @@ class Organization(Base):
     name: Mapped[str] = mapped_column(String(255))
     code: Mapped[str] = mapped_column(unique=True)
     description: Mapped[Optional[str]] = mapped_column()
-    count_of_warehouses: Mapped[Optional[int]] = mapped_column(default=0)
+    count_of_warehouses: Mapped[int] = mapped_column(default=0)
     manager_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"))
 
     warehouses: Mapped["Warehouse"] = relationship()
