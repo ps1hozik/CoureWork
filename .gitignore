@@ -2,4 +2,4 @@ venv
 __pycache__
 /alembic
 .env
-
+alembic.ini

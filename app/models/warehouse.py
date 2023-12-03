@@ -6,7 +6,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
 
-
 class Warehouse(Base):
     __tablename__ = "warehouses"
 
@@ -18,7 +17,7 @@ class Warehouse(Base):
     organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"))
     employee_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
-    products: Mapped["Product"] = relationship(back_populates="parent")
+    products: Mapped["Product"] = relationship()
 
-    organization: Mapped["Organization"] = relationship(back_populates="children")
-    employee: Mapped["User"] = relationship(back_populates="children")
+    organization: Mapped["Organization"] = relationship()
+    employee: Mapped["User"] = relationship()

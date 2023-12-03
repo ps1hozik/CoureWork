@@ -4,7 +4,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
 
-
 class User(Base):
     __tablename__ = "users"
 
@@ -14,6 +13,6 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column()
     post: Mapped[str] = mapped_column(String(255), index=True)
 
-    organizations: Mapped["Organization"] = relationship(back_populates="parent")
-    warehouses: Mapped["Warehouse"] = relationship(back_populates="parent")
-    products: Mapped["Product"] = relationship(back_populates="parent")
+    organizations: Mapped["Organization"] = relationship()
+    warehouses: Mapped["Warehouse"] = relationship()
+    products: Mapped["Product"] = relationship()

@@ -11,4 +11,4 @@ class ProductPhoto(Base):
     photo: Mapped[str] = mapped_column(String[255])
     product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
 
-    product: Mapped["Product"] = relationship(back_populates="children")
+    product: Mapped["Product"] = relationship()

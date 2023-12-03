@@ -9,8 +9,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
 
-
-
 class Product(Base):
     __tablename__ = "products"
 
@@ -27,7 +25,7 @@ class Product(Base):
     last_employee_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     warehouse_id: Mapped[int] = mapped_column(ForeignKey("warehouses.id"))
 
-    product_photos: Mapped["ProductPhoto"] = relationship(back_populates="parent")
+    product_photos: Mapped["ProductPhoto"] = relationship()
 
-    warehouse: Mapped["Warehouse"] = relationship(back_populates="children")
-    last_employee: Mapped["User"] = relationship(back_populates="children")
+    warehouse: Mapped["Warehouse"] = relationship()
+    last_employee: Mapped["User"] = relationship()
