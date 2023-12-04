@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 
 from models.organization import Organization
-from schemas.organization import OrganizationCreate, OrganizationUpdate, OrganizationGet
+from schemas.organization import OrganizationCreate, OrganizationUpdate
 
 
 def create(db: Session, data: OrganizationCreate):

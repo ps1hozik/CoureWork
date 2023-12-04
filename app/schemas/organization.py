@@ -3,12 +3,6 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class OrganizationGet(BaseModel):
-    code: str
-
-    class Config:
-        from_attributes = True
-
 
 class OrganizationCreate(BaseModel):
     name: str

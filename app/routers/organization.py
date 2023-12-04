@@ -1,4 +1,4 @@
-from schemas.organization import OrganizationCreate, OrganizationUpdate, OrganizationGet
+from schemas.organization import OrganizationCreate, OrganizationUpdate
 from controllers import organization
 
 from sqlalchemy.orm import Session

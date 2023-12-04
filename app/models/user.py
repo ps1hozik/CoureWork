@@ -1,4 +1,4 @@
-from sqlalchemy import String
+from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
@@ -12,6 +12,7 @@ class User(Base):
     login: Mapped[str] = mapped_column(String(20))
     password_hash: Mapped[str] = mapped_column()
     post: Mapped[str] = mapped_column(String(255), index=True)
+    warehouse_id: Mapped[int] = mapped_column(ForeignKey("warehouses.id"))
 
     organizations: Mapped["Organization"] = relationship()
     warehouses: Mapped["Warehouse"] = relationship()

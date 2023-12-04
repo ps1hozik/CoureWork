@@ -15,7 +15,6 @@ class Warehouse(Base):
     address: Mapped[str] = mapped_column()
     count_of_employees: Mapped[int] = mapped_column(default=0)
     organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"))
-    employee_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
     products: Mapped["Product"] = relationship()
 
