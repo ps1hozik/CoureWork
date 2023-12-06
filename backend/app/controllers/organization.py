@@ -7,7 +7,7 @@ from models.organization import Organization
 from schemas.organization import OrganizationCreate, OrganizationUpdate
 
 
-def create(db: Session, data: OrganizationCreate):
+async def create(db: Session, data: OrganizationCreate):
     if db.scalar(select(Organization).where(Organization.code == data.code)):
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,

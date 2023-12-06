@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import MainPage from "./components/main";
+import MainLayout from "./components/main_layout";
+import Login from "./components/login";
+import Registration from "./components/registration";
+import OrganizationAdd from "./components/organization_add";
+import WarehouseAdd from "./components/warehouse_add";
+import WarehouseGet from "./components/warehouse_get";
+import ProductAdd from "./components/product_add";
+import ProductGet from "./components/product/product_get";
+import { Route, Routes } from "react-router";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<MainLayout children={<MainPage />} />} />
+      <Route path="login" element={<Login />} />
+      <Route path="registration" element={<Registration />} />
+      <Route path="organization_add" element={<OrganizationAdd />} />
+      <Route
+        path="warehouse_add"
+        element={<MainLayout children={<WarehouseAdd />} />}
+      />
+      <Route
+        path="warehouse_get"
+        element={<MainLayout children={<WarehouseGet />} />}
+      />
+      <Route
+        path="product_add"
+        element={<MainLayout children={<ProductAdd text="Добавить" />} />}
+      />
+      <Route
+        path="product_get"
+        element={<MainLayout children={<ProductGet />} />}
+      />
+      <Route
+        path="product_update"
+        element={<MainLayout children={<ProductAdd text="Изменить" />} />}
+      />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
