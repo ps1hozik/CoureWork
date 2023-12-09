@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .base import Base
+from ..database import Base
 
 
 class Warehouse(Base):
@@ -17,6 +17,5 @@ class Warehouse(Base):
     organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"))
 
     products: Mapped["Product"] = relationship()
-
     organization: Mapped["Organization"] = relationship()
     employee: Mapped["User"] = relationship()

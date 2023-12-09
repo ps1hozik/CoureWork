@@ -4,7 +4,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .base import Base
+from ..database import Base
 
 
 class Organization(Base):
@@ -18,5 +18,4 @@ class Organization(Base):
     manager_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"))
 
     warehouses: Mapped["Warehouse"] = relationship()
-
     manager: Mapped["User"] = relationship()

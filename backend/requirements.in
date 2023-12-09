@@ -1,7 +1,12 @@
 fastapi
 uvicorn[standard]
 sqlalchemy
-psycopg2-binary
+asyncpg
 alembic
 python-multipart
 python-jose[cryptography]
+passlib[bcrypt]
+jose
+passlib
+PyJWT
+python-decouple
