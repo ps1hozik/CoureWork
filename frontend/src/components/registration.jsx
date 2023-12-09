@@ -13,7 +13,7 @@ import {
 export default function Registration() {
   return (
     <Flex bg="gray.100" align="center" justify="center" h="100vh">
-      <Box bg="white" p={6} rounded="md" w="50vh" >
+      <Box bg="white" p={6} rounded="md" w="50vh">
         <Formik
           initialValues={{
             name: "",
@@ -22,7 +22,11 @@ export default function Registration() {
             password: "",
           }}
           onSubmit={(values) => {
-            alert(JSON.stringify(values, null, 2));
+            fetch("http://localhost:8000/user/registration", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(values, null, 2),
+            });
           }}
         >
           {({ handleSubmit, errors, touched }) => (
@@ -48,7 +52,7 @@ export default function Registration() {
                     variant="filled"
                   />
                 </FormControl>
-              
+
                 <FormControl paddingTop={10}>
                   <FormLabel htmlFor="login">Логин</FormLabel>
                   <Field

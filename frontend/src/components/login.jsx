@@ -8,9 +8,17 @@ import {
   FormErrorMessage,
   Input,
   VStack,
+  Text,
 } from "@chakra-ui/react";
 
+import { fetchToken, setToken, setName } from "./auth";
+import { useNavigate } from "react-router";
+
 export default function Login() {
+  const navigate = useNavigate();
+  const register = () => {
+    navigate("/registration");
+  };
   return (
     <Flex bg="gray.100" align="center" justify="center" h="100vh">
       <Box bg="white" p={6} rounded="md" w="50vh">
@@ -20,7 +28,28 @@ export default function Login() {
             password: "",
           }}
           onSubmit={(values) => {
-            alert(JSON.stringify(values, null, 2));
+            fetch("http://localhost:8000/user/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(values, null, 2),
+            })
+              .then(function (response) {
+                return response.json();
+              })
+              .then(function (data) {
+                console.log(data.access_token, "response.data.access_token\n");
+                console.log(data.name, "response.data.name\n");
+                console.log(data, "response.data\n");
+
+                if (data.access_token) {
+                  setToken(data.access_token);
+                  setName(data.name);
+                  navigate("/warehouse_add");
+                }
+              })
+              .catch(function (error) {
+                console.log(error, "error");
+              });
           }}
         >
           {({ handleSubmit, errors, touched }) => (
@@ -56,9 +85,18 @@ export default function Login() {
                   />
                   <FormErrorMessage>{errors.password}</FormErrorMessage>
                 </FormControl>
-
                 <Button type="submit" colorScheme="teal" width="full">
                   Войти
+                </Button>
+
+                <Button
+                  mt={4}
+                  size="sm"
+                  colorScheme="teal"
+                  width="full"
+                  onClick={register}
+                >
+                  Зарегестрироваться
                 </Button>
               </VStack>
             </form>

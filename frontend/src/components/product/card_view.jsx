@@ -28,9 +28,8 @@ export default function CardView({
   description,
 }) {
   return (
-    <Box
+    <Flex
       bg="white"
-      display="flex"
       flexDirection="column"
       alignItems="center"
       rounded="md"
@@ -38,6 +37,7 @@ export default function CardView({
       ml={10}
       p={6}
       mt={10}
+      maxWidth={360}
     >
       <Card bg="gray.100" p={4} roundedTop="md" mb={4}>
         <CardHeader>
@@ -87,7 +87,7 @@ export default function CardView({
         </CardBody>
       </Card>
 
-      <Flex maxWidth={367.3} w="100%">
+      <Flex maxWidth={360} w="100%">
         <Link to={"/product_update"} className="link" style={{ width: "100%" }}>
           <Button colorScheme="teal" w="full">
             Изменить
@@ -97,6 +97,6 @@ export default function CardView({
           X
         </Button>
       </Flex>
-    </Box>
+    </Flex>
   );
 }

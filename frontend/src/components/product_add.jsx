@@ -13,8 +13,8 @@ import {
 
 export default function ProductAdd({ text }) {
   return (
-    <Flex bg="gray.100" align="center" justify="center" h="100vh">
-      <Box bg="white" p={6} rounded="md" w="50vh">
+    <Flex bg="gray.100" align="center" justify="center" p={10}>
+      <Box bg="white" p={6} rounded="md" w={400}>
         <Formik
           initialValues={{
             name: "",
@@ -31,7 +31,7 @@ export default function ProductAdd({ text }) {
         >
           {({ handleSubmit }) => (
             <form onSubmit={handleSubmit}>
-              <VStack spacing={4} align="flex-start">
+              <VStack spacing={4}>
                 <FormControl>
                   <FormLabel htmlFor="name">Название</FormLabel>
                   <Field

@@ -22,40 +22,25 @@ const Head = ({ viewB, setViewB }) => {
   };
   return (
     <Flex
-      position="fixed"
       bg="gray.50"
-      justify="center"
+      justify="space-between"
       gap={30}
-      pl={20}
-      pr={20}
+      pl={10}
+      pr={10}
       zIndex={1}
       width="100%"
     >
-      <Link
-        to={"/product_add"}
-        className="link"
-        style={{ margin: 4, marginRight: 10, width: "100%" }}
-      >
+      <Link to={"/product_add"} style={{ margin: 4 }}>
         <Button colorScheme="teal" w="100%">
           Добавить
         </Button>
       </Link>
-      <Link
-        to={"/warehouse_get"}
-        className="link"
-        style={{ margin: 4, marginLeft: 10, width: "100%" }}
-      >
+      <Link to={"/warehouse_get"} style={{ margin: 4 }}>
         <Button colorScheme="teal" w="100%">
           Склады
         </Button>
       </Link>
-      <Button
-        colorScheme="teal"
-        m={1}
-        ml={4}
-        w="20%"
-        onClick={handleChangeView}
-      >
+      <Button colorScheme="teal" m={1} onClick={handleChangeView}>
         {view}
       </Button>
     </Flex>
