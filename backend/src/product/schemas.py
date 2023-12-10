@@ -14,8 +14,6 @@ class ProductCreate(BaseModel):
     price: Decimal
     total_quantity: int
     booked_quantity: Optional[int] = None
-    created_at: datetime = datetime.now()
-    updated_at: datetime = datetime.now()
 
 
 class ProductUpdate(BaseModel):

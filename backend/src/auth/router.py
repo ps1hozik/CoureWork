@@ -1,69 +1,62 @@
-from config import authjwt_exception_handler, AuthJWT
-from fastapi import HTTPException, Depends, APIRouter
+from fastapi import Depends, APIRouter, HTTPException
+
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, insert
-
+from sqlalchemy import insert, select
 from database import get_async_session
-from models import User
-from schemas import User, UserCreate
+
+from .utils import get_password_hash, verify_password
+from .schemas import UserCreate, UserLogin
+from .models import User
+
+router = APIRouter(
+    prefix="/auth",
+    tags=["Auth"],
+)
 
 
-router = APIRouter(prefix="/auth", tags=["Auth"])
-
-
-@router.post("/singin")
-async def singin(
-    new_user: UserCreate, session: AsyncSession = Depends(get_async_session)
-):
-    if select(User).where(User.c.login == new_user.login):
+@router.post("/singin", status_code=201)
+async def create(data: UserCreate, session: AsyncSession = Depends(get_async_session)):
+    stmt = select(User).where(User.login == data.login)
+    user: User | None = await session.scalar(stmt)
+    if user != None:
         raise HTTPException(
             status_code=400,
-            detail=f"User {new_user.login} already exist!",
+            detail=f"User already exist!",
         )
-    stmt = insert(User).values(**new_user.dict())
+    hashed_password = get_password_hash(data.password)
+    data = data.dict()
+    data.pop("password")
+    stmt = insert(User).values(**data, hashed_password=hashed_password)
     await session.execute(stmt)
     await session.commit()
-    return {"status": "success"}
+    return {"message": "Successful creation"}
 
 
 @router.post("/login")
-async def login(
-    user: User,
-    session: AsyncSession = Depends(get_async_session),
-    Authorize: authjwt_exception_handler = Depends(),
-):
-    if user.username != "test" or user.password != "test":
-        raise HTTPException(status_code=401, detail="Bad username or password")
-
-    access_token = Authorize.create_access_token(subject=user.username)
-    refresh_token = Authorize.create_refresh_token(subject=user.username)
-
-    Authorize.set_access_cookies(access_token)
-    Authorize.set_refresh_cookies(refresh_token)
-    return {"msg": "Successfully login"}
-
-
-@router.post("/refresh")
-def refresh(Authorize: AuthJWT = Depends()):
-    Authorize.jwt_refresh_token_required()
-
-    current_user = Authorize.get_jwt_subject()
-    new_access_token = Authorize.create_access_token(subject=current_user)
-    Authorize.set_access_cookies(new_access_token)
-    return {"msg": "The token has been refresh"}
+async def login(data: UserLogin, session: AsyncSession = Depends(get_async_session)):
+    stmt = select(User).where(User.login == data.login)
+    user: User | None = await session.scalar(stmt)
+    if user == None:
+        raise HTTPException(
+            status_code=400,
+            detail=f"User dosen't exist!",
+        )
+    if verify_password(data.password, user.hashed_password):
+        return {"status": "success", "data": user.name, "details": "Successful remove"}
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Uncorrect login or passeord!",
+        )
 
 
-@router.delete("/logout")
-def logout(Authorize: AuthJWT = Depends()):
-    Authorize.jwt_required()
-
-    Authorize.unset_jwt_cookies()
-    return {"msg": "Successfully logout"}
-
-
-@router.get("/protected")
-def protected(Authorize: AuthJWT = Depends()):
-    Authorize.jwt_required()
-
-    current_user = Authorize.get_jwt_subject()
-    return {"user": current_user}
+@router.get("/{id}")
+async def get(id: int, session: AsyncSession = Depends(get_async_session)):
+    stmt = select(User).where(User.id == id)
+    user: User | None = await session.scalar(stmt)
+    if user == None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"User {id} dosen't exist!",
+        )
+    return user

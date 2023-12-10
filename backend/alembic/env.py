@@ -5,6 +5,12 @@ from sqlalchemy import pool
 
 from alembic import context
 
+import os
+
+# import sys
+
+# sys.path.append(os.path.join(sys.path[0], "src"))
+
 from src.database import Base, DATABASE_URL
 
 from src.auth.models import Base as auth_base

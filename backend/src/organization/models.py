@@ -1,8 +1,15 @@
+from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from ..database import Base
+from database import Base
+
+# from src.database import Base
+
+if TYPE_CHECKING:
+    from auth.models import User
+    from warehouse.models import Warehouse
 
 
 class Organization(Base):
@@ -15,5 +22,5 @@ class Organization(Base):
     count_of_warehouses: Mapped[int] = mapped_column(default=0)
     manager_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
 
-    warehouses: Mapped["Warehouse"] = relationship()
-    manager: Mapped["User"] = relationship()
+    users: Mapped["User"] = relationship("User", back_populates="organizations")
+    warehouses: Mapped["Warehouse"] = relationship(back_populates="organizations")

@@ -1,8 +1,8 @@
 """Init
 
-Revision ID: cee5ad9c9334
-Revises: 
-Create Date: 2023-12-09 23:30:55.254096
+Revision ID: 568dab8b3197
+Revises: 6f063c6a400c
+Create Date: 2023-12-10 15:20:56.804823
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'cee5ad9c9334'
-down_revision: Union[str, None] = None
+revision: str = '568dab8b3197'
+down_revision: Union[str, None] = '6f063c6a400c'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -26,12 +26,21 @@ def upgrade() -> None:
     sa.Column('code', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
     sa.Column('count_of_warehouses', sa.Integer(), nullable=False),
-    sa.Column('manager_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['manager_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('code')
     )
     op.create_index(op.f('ix_organizations_id'), 'organizations', ['id'], unique=False)
+    op.create_table('warehouses',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('name', sa.String(length=255), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('address', sa.String(), nullable=False),
+    sa.Column('count_of_employees', sa.Integer(), nullable=False),
+    sa.Column('organization_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_warehouses_id'), 'warehouses', ['id'], unique=False)
     op.create_table('users',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('name', sa.String(length=128), nullable=False),
@@ -46,29 +55,18 @@ def upgrade() -> None:
     op.create_index(op.f('ix_users_id'), 'users', ['id'], unique=False)
     op.create_index(op.f('ix_users_name'), 'users', ['name'], unique=False)
     op.create_index(op.f('ix_users_post'), 'users', ['post'], unique=False)
-    op.create_table('warehouses',
-    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('name', sa.String(length=255), nullable=False),
-    sa.Column('description', sa.String(), nullable=True),
-    sa.Column('address', sa.String(), nullable=False),
-    sa.Column('count_of_employees', sa.Integer(), nullable=False),
-    sa.Column('organization_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_warehouses_id'), 'warehouses', ['id'], unique=False)
     op.create_table('products',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('name', sa.String(length=255), nullable=False),
     sa.Column('manufacturer', sa.String(length=255), nullable=False),
     sa.Column('barcode', sa.Integer(), nullable=True),
     sa.Column('description', sa.String(), nullable=True),
-    sa.Column('price', sa.Numeric(precision=2), nullable=False),
+    sa.Column('price', sa.Numeric(), nullable=False),
     sa.Column('total_quantity', sa.Integer(), nullable=False),
     sa.Column('booked_quantity', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
-    sa.Column('last_employee_id', sa.Integer(), nullable=False),
+    sa.Column('last_employee_id', sa.Integer(), nullable=True),
     sa.Column('warehouse_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['last_employee_id'], ['users.id'], ),
     sa.ForeignKeyConstraint(['warehouse_id'], ['warehouses.id'], ),
@@ -94,12 +92,12 @@ def downgrade() -> None:
     op.drop_table('tokens')
     op.drop_index(op.f('ix_products_id'), table_name='products')
     op.drop_table('products')
-    op.drop_index(op.f('ix_warehouses_id'), table_name='warehouses')
-    op.drop_table('warehouses')
     op.drop_index(op.f('ix_users_post'), table_name='users')
     op.drop_index(op.f('ix_users_name'), table_name='users')
     op.drop_index(op.f('ix_users_id'), table_name='users')
     op.drop_table('users')
+    op.drop_index(op.f('ix_warehouses_id'), table_name='warehouses')
+    op.drop_table('warehouses')
     op.drop_index(op.f('ix_organizations_id'), table_name='organizations')
     op.drop_table('organizations')
     # ### end Alembic commands ###

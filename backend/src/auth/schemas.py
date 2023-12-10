@@ -20,6 +20,11 @@ class UserCreate(User):
     password: str
 
 
+class UserLogin(BaseModel):
+    login: str
+    password: str
+
+
 # class requestdetails(BaseModel):
 #     login: str
 #     password: str
