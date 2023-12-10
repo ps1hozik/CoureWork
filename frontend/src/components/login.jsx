@@ -10,11 +10,12 @@ import {
   VStack,
   Text,
 } from "@chakra-ui/react";
+import Cookies from "universal-cookie";
 
-import { fetchToken, setToken, setName } from "./auth";
 import { useNavigate } from "react-router";
 
 export default function Login() {
+  const cookies = new Cookies();
   const navigate = useNavigate();
   const register = () => {
     navigate("/registration");
@@ -28,7 +29,7 @@ export default function Login() {
             password: "",
           }}
           onSubmit={(values) => {
-            fetch("http://localhost:8000/user/login", {
+            fetch("http://localhost:8000/auth/login", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(values, null, 2),
@@ -37,14 +38,10 @@ export default function Login() {
                 return response.json();
               })
               .then(function (data) {
-                console.log(data.access_token, "response.data.access_token\n");
-                console.log(data.name, "response.data.name\n");
-                console.log(data, "response.data\n");
+                cookies.set("name", data.data);
 
-                if (data.access_token) {
-                  setToken(data.access_token);
-                  setName(data.name);
-                  navigate("/warehouse_add");
+                if (data.status == "success") {
+                  navigate("/organization_add");
                 }
               })
               .catch(function (error) {

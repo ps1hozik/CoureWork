@@ -1,22 +1,23 @@
 /* eslint-disable react/prop-types */
-import { Flex, Button, Tr } from "@chakra-ui/react";
+import { Flex, Button } from "@chakra-ui/react";
 
 import { Link } from "react-router-dom";
 
 import CardView from "./card_view";
 import TableView from "./table_view";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Cookies from "universal-cookie";
 
 const Head = ({ viewB, setViewB }) => {
-  const [view, setView] = useState("Вид: Карточки");
+  const [view, setView] = useState("Вид: Таблица");
 
   const handleChangeView = () => {
-    if (view === "Вид: Карточки") {
-      setView("Вид: Таблица");
+    if (view === "Вид: Таблица") {
+      setView("Вид: Карточки");
       setViewB(false);
     } else {
-      setView("Вид: Карточки");
+      setView("Вид: Таблица");
       setViewB(true);
     }
   };
@@ -47,151 +48,60 @@ const Head = ({ viewB, setViewB }) => {
   );
 };
 
-export default function WarehouseList() {
-  const products = [
-    {
-      name: "Сырок творожный1",
-      manufacturer: "Савушкин продукт",
-      barcode: "103102030481",
-      price: "0.75",
-      total_quantity: "100000",
-      booked_quantity: "7800",
-      description:
-        "Условия и сроки хранения хранить при t (4±2) °С. Дата изготовления и срок годности указаны на упаковке.",
-    },
-    {
-      name: "Сырок творожный2",
-      manufacturer: "Савушкин продукт",
-      barcode: "103102030481",
-      price: "0.75",
-      total_quantity: "100000",
-      booked_quantity: "7800",
-      description:
-        "Условия и сроки хранения хранить при t (4±2) °С. Дата изготовления и срок годности указаны на упаковке.",
-    },
-    {
-      name: "Сырок творожный3",
-      manufacturer: "Савушкин продукт",
-      barcode: "103102030481",
-      price: "0.75",
-      total_quantity: "100000",
-      booked_quantity: "7800",
-      description:
-        "Условия и сроки хранения хранить при t (4±2) °С. Дата изготовления и срок годности указаны на упаковке.",
-    },
-    {
-      name: "Сырок творожный4",
-      manufacturer: "Савушкин продукт",
-      barcode: "103102030481",
-      price: "0.75",
-      total_quantity: "100000",
-      booked_quantity: "7800",
-      description:
-        "Условия и сроки хранения хранить при t (4±2) °С. Дата изготовления и срок годности указаны на упаковке.",
-    },
-    {
-      name: "Сырок творожный5",
-      manufacturer: "Савушкин продукт",
-      barcode: "103102030481",
-      price: "0.75",
-      total_quantity: "100000",
-      booked_quantity: "7800",
-      description:
-        "Условия и сроки хранения хранить при t (4±2) °С. Дата изготовления и срок годности указаны на упаковке.",
-    },
-    {
-      name: "Сырок творожный6",
-      manufacturer: "Савушкин продукт",
-      barcode: "103102030481",
-      price: "0.75",
-      total_quantity: "100000",
-      booked_quantity: "7800",
-      description:
-        "Условия и сроки хранения хранить при t (4±2) °С. Дата изготовления и срок годности указаны на упаковке.",
-    },
-    {
-      name: "Сырок творожный7",
-      manufacturer: "Савушкин продукт",
-      barcode: "103102030481",
-      price: "0.75",
-      total_quantity: "100000",
-      booked_quantity: "7800",
-      description:
-        "Условия и сроки хранения хранить при t (4±2) °С. Дата изготовления и срок годности указаны на упаковке.",
-    },
-    {
-      name: "Сырок творожный8",
-      manufacturer: "Савушкин продукт",
-      barcode: "103102030481",
-      price: "0.75",
-      total_quantity: "100000",
-      booked_quantity: "7800",
-      description:
-        "Условия и сроки хранения хранить при t (4±2) °С. Дата изготовления и срок годности указаны на упаковке.",
-    },
-    {
-      name: "Сырок творожный9",
-      manufacturer: "Савушкин продукт",
-      barcode: "103102030481",
-      price: "0.75",
-      total_quantity: "100000",
-      booked_quantity: "7800",
-      description:
-        "Условия и сроки хранения хранить при t (4±2) °С. Дата изготовления и срок годности указаны на упаковке.",
-    },
-    {
-      name: "Сырок творожный10",
-      manufacturer: "Савушкин продукт",
-      barcode: "103102030481",
-      price: "0.75",
-      total_quantity: "100000",
-      booked_quantity: "7800",
-      description:
-        "Условия и сроки хранения хранить при t (4±2) °С. Дата изготовления и срок годности указаны на упаковке.",
-    },
-    {
-      name: "Сырок творожный11",
-      manufacturer: "Савушкин продукт",
-      barcode: "103102030481",
-      price: "0.75",
-      total_quantity: "100000",
-      booked_quantity: "7800",
-      description:
-        "Условия и сроки хранения хранить при t (4±2) °С. Дата изготовления и срок годности указаны на упаковке.",
-    },
-    {
-      name: "Сырок творожный12",
-      manufacturer: "Савушкин продукт",
-      barcode: "103102030481",
-      price: "0.75",
-      total_quantity: "100000",
-      booked_quantity: "7800",
-      description:
-        "Условия и сроки хранения хранить при t (4±2) °С. Дата изготовления и срок годности указаны на упаковке.",
-    },
-    {
-      name: "Сырок творожный13",
-      manufacturer: "Савушкин продукт",
-      barcode: "103102030481",
-      price: "0.75",
-      total_quantity: "100000",
-      booked_quantity: "7800",
-      description:
-        "Условия и сроки хранения хранить при t (4±2) °С. Дата изготовления и срок годности указаны на упаковке.",
-    },
-  ];
+export default function ProductList() {
+  const [products, setProducts] = useState([]);
+  const cookies = new Cookies();
+
+  const w_id = cookies.get("warehouse_id");
+  const deleteProduct = () => {
+    const p_id = cookies.get("product_id");
+
+    fetch(`http://localhost:8000/product/${w_id}/${p_id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then(function () {
+        console.log("remove success");
+      })
+      .catch(function (error) {
+        console.log(error, "error");
+      });
+    setProducts((prev) => [...prev].filter((el) => el.id !== p_id));
+    cookies.remove("product_id");
+  };
+
+  useEffect(() => {});
+
+  useEffect(() => {
+    fetch(`http://localhost:8000/product/${w_id}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (data.status === "success") {
+          setProducts(data.data);
+        }
+      })
+      .catch(function (error) {
+        console.log(error, "error");
+      });
+  }, [w_id]);
+
   const [viewB, setViewB] = useState(true);
 
   const View = () => {
-    if (viewB) {
+    if (!viewB) {
       return <TableView products={products} />;
     } else {
       return (
         <>
-          {products.map((product, index) => (
+          {products.map((product) => (
             <CardView
-              key={index}
-              index={index}
+              key={product.id}
+              id={product.id}
               name={product.name}
               manufacturer={product.manufacturer}
               barcode={product.barcode}
@@ -199,6 +109,7 @@ export default function WarehouseList() {
               total_quantity={product.total_quantity}
               booked_quantity={product.booked_quantity}
               description={product.description}
+              remove={deleteProduct}
             />
           ))}
         </>

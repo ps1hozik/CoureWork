@@ -1,13 +1,11 @@
-import { Link } from "react-router-dom";
 import { Box, Button, Flex, VStack, Text } from "@chakra-ui/react";
 import { useNavigate } from "react-router";
-
+import Cookies from "universal-cookie";
 const MainLayout = ({ children }) => {
-  console.log(localStorage.getItem("name"));
+  const cookies = new Cookies();
   const navigate = useNavigate();
   const signOut = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("name");
+    cookies.remove("name");
     navigate("/login");
   };
   const main_page = () => {
@@ -17,7 +15,7 @@ const MainLayout = ({ children }) => {
     <Box>
       <Flex justify-content="space-between">
         <VStack spacing={8} align="flex-start" bg="white" p={4}>
-          <Text fontSize="xl">{localStorage.getItem("name")}</Text>
+          <Text fontSize="xl">{cookies.get("name")}</Text>
 
           <Button fontSize="md" colorScheme="teal" onClick={main_page} w={100}>
             На главную

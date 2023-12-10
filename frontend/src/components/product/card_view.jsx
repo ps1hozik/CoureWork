@@ -16,9 +16,10 @@ import {
 } from "@chakra-ui/react";
 
 import { Link } from "react-router-dom";
+import Cookies from "universal-cookie";
 
 export default function CardView({
-  index,
+  id,
   name,
   manufacturer,
   barcode,
@@ -26,7 +27,13 @@ export default function CardView({
   total_quantity,
   booked_quantity,
   description,
+  remove,
 }) {
+  const cookies = new Cookies();
+  const deleteProduct = () => {
+    cookies.set("product_id", id);
+    remove();
+  };
   return (
     <Flex
       bg="white"
@@ -93,7 +100,7 @@ export default function CardView({
             Изменить
           </Button>
         </Link>
-        <Button colorScheme="teal" ml={2}>
+        <Button colorScheme="teal" ml={2} onClick={deleteProduct}>
           X
         </Button>
       </Flex>

@@ -10,7 +10,12 @@ import {
   VStack,
 } from "@chakra-ui/react";
 
+import { useNavigate } from "react-router";
+import Cookies from "universal-cookie";
+
 export default function WarehouseAdd() {
+  const cookies = new Cookies();
+  const navigate = useNavigate();
   return (
     <Flex bg="gray.100" align="center" justify="center" h="100vh">
       <Box bg="white" p={6} rounded="md" w="50vh">
@@ -21,7 +26,24 @@ export default function WarehouseAdd() {
             description: "",
           }}
           onSubmit={(values) => {
-            alert(JSON.stringify(values, null, 2));
+            const o_id = cookies.get("organization_id");
+
+            fetch(`http://localhost:8000/warehouse/${o_id}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(values, null, 2),
+            })
+              .then(function (response) {
+                return response.json();
+              })
+              .then(function (data) {
+                if (data.status == "success") {
+                  navigate("/warehouse_get");
+                }
+              })
+              .catch(function (error) {
+                console.log(error, "error");
+              });
           }}
         >
           {({ handleSubmit }) => (

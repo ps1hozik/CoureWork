@@ -10,8 +10,12 @@ import {
   Input,
   VStack,
 } from "@chakra-ui/react";
+import Cookies from "universal-cookie";
+import { useNavigate } from "react-router";
 
 export default function ProductAdd({ text }) {
+  const navigate = useNavigate();
+  const cookies = new Cookies();
   return (
     <Flex bg="gray.100" align="center" justify="center" p={10}>
       <Box bg="white" p={6} rounded="md" w={400}>
@@ -26,7 +30,24 @@ export default function ProductAdd({ text }) {
             descriptin: "",
           }}
           onSubmit={(values) => {
-            alert(JSON.stringify(values, null, 2));
+            const w_id = cookies.get("warehouse_id");
+
+            fetch(`http://localhost:8000/product/${w_id}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(values, null, 2),
+            })
+              .then(function (response) {
+                return response.json();
+              })
+              .then(function (data) {
+                if (data.status == "success") {
+                  navigate("/product_get");
+                }
+              })
+              .catch(function (error) {
+                console.log(error, "error");
+              });
           }}
         >
           {({ handleSubmit }) => (

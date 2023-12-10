@@ -1,8 +1,17 @@
 /* eslint-disable react/prop-types */
 import { Box, Flex, Text, Textarea, Button } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import Cookies from "universal-cookie";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 
-const WarehouseBlock = ({ index, name, address, description }) => {
+const WarehouseBlock = ({ w_id, name, address, description, cookies }) => {
+  const navigate = useNavigate();
+  const chose_warehouse = () => {
+    cookies.set("warehouse_id", w_id);
+    navigate("/product_get");
+  };
+
   return (
     <Box
       bg="white"
@@ -16,7 +25,7 @@ const WarehouseBlock = ({ index, name, address, description }) => {
       mb={4}
       w={340}
     >
-      <Box bg="gray.100" p={4} roundedTop="md" h={120}>
+      <Box bg="gray.100" p={4} roundedTop="md" h={150} w="100%" maxWidth={360}>
         <Text fontWeight="bold" fontSize={30}>
           {name}
         </Text>
@@ -28,6 +37,8 @@ const WarehouseBlock = ({ index, name, address, description }) => {
         rounded="none"
         roundedBottom="md"
         h={150}
+        w="100%"
+        maxWidth={360}
         mb={5}
         resize="none"
         readOnly={true}
@@ -35,7 +46,7 @@ const WarehouseBlock = ({ index, name, address, description }) => {
       />
       <Box w="full">
         <Link to={"/product_get"} className="link">
-          <Button colorScheme="teal" width="full">
+          <Button colorScheme="teal" width="full" onClick={chose_warehouse}>
             Выбрать
           </Button>
         </Link>
@@ -44,33 +55,31 @@ const WarehouseBlock = ({ index, name, address, description }) => {
   );
 };
 
-export default function WarehouseList() {
-  const warehouses = [
-    {
-      name: "Name 1",
-      address: "155 Cleveland Drive South Richmond Hill, NY 11419",
-      description:
-        "rem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and",
-    },
+const get_warehouses = () => {};
 
-    {
-      name: "Name 2",
-      address: "25 Locust Lane Far Rockaway, NY 11691",
-      description: "",
-    },
-    {
-      name: "Name 3",
-      address: "98 Fairground Street Lithonia, GA 30038",
-      description:
-        "Contrary to popular belief, Lorem Ipsum is not simply random text.",
-    },
-    {
-      name: "Name 4",
-      address: "546 Sherwood Drive Owensboro, KY 42301",
-      description:
-        "o be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non",
-    },
-  ];
+export default function WarehouseList() {
+  const [warehouses, setWarehouses] = useState([]);
+  const cookies = new Cookies();
+  const o_id = cookies.get("organization_id");
+
+  useEffect(() => {
+    fetch(`http://localhost:8000/warehouse/${o_id}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (data.status === "success") {
+          setWarehouses(data.data);
+        }
+      })
+      .catch(function (error) {
+        console.log(error, "error");
+      });
+  }, [o_id]);
+
   return (
     <Flex
       bg="gray.100"
@@ -80,13 +89,14 @@ export default function WarehouseList() {
       overflow="auto"
       p={6}
     >
-      {warehouses.map((warehouse, index) => (
+      {warehouses.map((warehouse) => (
         <WarehouseBlock
-          key={index}
-          index={index}
+          key={warehouse.id}
+          w_id={warehouse.id}
           name={warehouse.name}
           address={warehouse.address}
           description={warehouse.description}
+          cookies={cookies}
         />
       ))}
     </Flex>

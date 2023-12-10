@@ -22,7 +22,7 @@ export default function Registration() {
             password: "",
           }}
           onSubmit={(values) => {
-            fetch("http://localhost:8000/user/registration", {
+            fetch("http://localhost:8000/auth/singin", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(values, null, 2),

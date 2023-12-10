@@ -8,7 +8,6 @@ import WarehouseGet from "./components/warehouse_get";
 import ProductAdd from "./components/product_add";
 import ProductGet from "./components/product/product_get";
 import { Route, Routes } from "react-router";
-import { RequireToken } from "./components/auth";
 
 function App() {
   return (
@@ -16,25 +15,10 @@ function App() {
       <Route path="/" element={<MainLayout children={<MainPage />} />} />
       <Route path="login" element={<Login />} />
       <Route path="registration" element={<Registration />} />
-      <Route
-        path="organization_add"
-        element={
-          <RequireToken>
-            <OrganizationAdd />
-          </RequireToken>
-        }
-      />
+      <Route path="organization_add" element={<OrganizationAdd />} />
       <Route
         path="warehouse_add"
-        element={
-          <MainLayout
-            children={
-              <RequireToken>
-                <WarehouseAdd />
-              </RequireToken>
-            }
-          />
-        }
+        element={<MainLayout children={<WarehouseAdd />} />}
       />
       <Route
         path="warehouse_get"
