@@ -24,4 +24,4 @@ class ProductUpdate(BaseModel):
     price: Optional[Decimal] = None
     total_quantity: Optional[int] = None
     booked_quantity: Optional[int] = None
-    updated_at: datetime = datetime.now()
+    updated_at: datetime = datetime.utcnow()

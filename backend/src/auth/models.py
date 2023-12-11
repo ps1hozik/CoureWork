@@ -22,10 +22,12 @@ class User(Base):
     login: Mapped[str] = mapped_column(String(20), unique=True)
     hashed_password: Mapped[str] = mapped_column()
     post: Mapped[str] = mapped_column(String(255), index=True)
-    warehouse_id: Mapped[int | None] = mapped_column(ForeignKey("warehouses.id"))
+    organization_id: Mapped[int | None] = mapped_column(ForeignKey("organizations.id"))
 
-    organizations: Mapped["Organization"] = relationship(back_populates="users")
-    warehouses: Mapped["Warehouse"] = relationship(back_populates="users")
+    organizations: Mapped["Organization"] = relationship(
+        "Organization", foreign_keys=[organization_id]
+    )
+    # warehouses: Mapped["Warehouse"] = relationship(back_populates="users")
     products: Mapped["Product"] = relationship(back_populates="users")
     tokens: Mapped["Token"] = relationship(back_populates="users")
 

@@ -29,7 +29,11 @@ async def create(data: UserCreate, session: AsyncSession = Depends(get_async_ses
     stmt = insert(User).values(**data, hashed_password=hashed_password)
     await session.execute(stmt)
     await session.commit()
-    return {"message": "Successful creation"}
+    return {
+        "status": "success",
+        "data": None,
+        "details": "Successful create",
+    }
 
 
 @router.post("/login")
@@ -42,7 +46,11 @@ async def login(data: UserLogin, session: AsyncSession = Depends(get_async_sessi
             detail=f"User dosen't exist!",
         )
     if verify_password(data.password, user.hashed_password):
-        return {"status": "success", "data": user.name, "details": "Successful remove"}
+        return {
+            "status": "success",
+            "data": {"name": user.name, "id": user.id, "org_id": user.organization_id},
+            "details": "Successful remove",
+        }
     else:
         raise HTTPException(
             status_code=404,
@@ -59,4 +67,20 @@ async def get(id: int, session: AsyncSession = Depends(get_async_session)):
             status_code=404,
             detail=f"User {id} dosen't exist!",
         )
+    return user
+
+
+@router.patch("/{id}")
+async def add_organization_id(
+    id: int, org_id: int, session: AsyncSession = Depends(get_async_session)
+):
+    stmt = select(User).where(User.id == id)
+    user: User | None = await session.scalar(stmt)
+    if user == None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"User {id} dosen't exist!",
+        )
+    user.organization_id = org_id
+    await session.commit()
     return user

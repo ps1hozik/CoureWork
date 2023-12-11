@@ -31,10 +31,7 @@ async def create(
         )
         product: Product | None = await session.scalar(stmt)
         if product != None:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Product with name: {data.name} manufacturer: {data.manufacturer} already exist!",
-            )
+            raise ValueError
         stmt = insert(Product).values(**data.dict(), warehouse_id=w_id)
         await session.execute(stmt)
         await session.commit()
@@ -43,10 +40,14 @@ async def create(
             "data": None,
             "details": None,
         }
-    except IntegrityError as e:
+    except ValueError:
         raise HTTPException(
             status_code=400,
-            detail=f"Warehouse with id: {w_id} dosen't exist",
+            detail={
+                "status": "success",
+                "data": None,
+                "details": f"Product with name: {data.name} manufacturer: {data.manufacturer} already exist!",
+            },
         )
 
 
@@ -63,10 +64,7 @@ async def update(
         )
         product: Product | None = await session.scalar(stmt)
         if product == None:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Product dosen't exist!",
-            )
+            raise
         stmt = (
             select(Product)
             .where(Product.warehouse_id == w_id)
@@ -78,30 +76,40 @@ async def update(
         )
         check_product: Product | None = await session.scalar(stmt)
         if check_product != None and check_product.id != id:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Product with name: {data.name} and manufacturer: {data.manufacturer} or barcode: {data.barcode} already exist!",
-            )
-        if data.name:
-            product.name = data.name
-        if data.manufacturer:
-            product.manufacturer = data.manufacturer
-        if data.barcode:
-            product.barcode = data.barcode
-        if data.description:
-            product.description = data.description
-        if data.price:
-            product.price = data.price
-        if data.total_quantity:
-            product.total_quantity = data.total_quantity
-        if data.booked_quantity:
-            product.booked_quantity = data.booked_quantity
+            raise ValueError
+
+        product.name = data.name
+        product.manufacturer = data.manufacturer
+        product.barcode = data.barcode
+        product.description = data.description
+        product.price = data.price
+        product.total_quantity = data.total_quantity
+        product.booked_quantity = data.booked_quantity
+        product.updated_at = data.updated_at
+
         await session.commit()
-        return product
-    except IntegrityError as e:
+        return {
+            "status": "success",
+            "data": product,
+            "details": None,
+        }
+    except ValueError:
         raise HTTPException(
             status_code=400,
-            detail=f"Warehouse with id: {w_id} dosen't exist",
+            detail={
+                "status": "error",
+                "data": None,
+                "details": f"Product with name: {data.name} and manufacturer: {data.manufacturer} or barcode: {data.barcode} already exist!",
+            },
+        )
+    except:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "status": "error",
+                "data": None,
+                "details": "Warehouse or product dosen't exist",
+            },
         )
 
 
@@ -115,15 +123,29 @@ async def get_by_id(
         )
         product: Product | None = await session.scalar(stmt)
         if product == None:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Product dosen't exist!",
-            )
-        return product
-    except IntegrityError as e:
+            raise ValueError
+        return {
+            "status": "success",
+            "data": product,
+            "details": None,
+        }
+    except ValueError:
         raise HTTPException(
-            status_code=400,
-            detail=f"Warehouse with id: {w_id} dosen't exist",
+            status_code=404,
+            detail={
+                "status": "error",
+                "data": None,
+                "details": f"Product dosen't exist!",
+            },
+        )
+    except:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "status": "error",
+                "data": None,
+                "details": None,
+            },
         )
 
 
@@ -133,20 +155,19 @@ async def get_all(w_id: int, session: AsyncSession = Depends(get_async_session))
         stmt = select(Product).where(Product.warehouse_id == w_id)
         result: Result = await session.execute(stmt)
         products: list[Product] | None = result.scalars().all()
-        if not products:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Warehouse doesn't have products",
-            )
         return {
             "status": "success",
             "data": products,
             "details": None,
         }
-    except IntegrityError as e:
+    except:
         raise HTTPException(
-            status_code=400,
-            detail=f"Warehouse with id: {w_id} dosen't exist",
+            status_code=500,
+            detail={
+                "status": "error",
+                "data": None,
+                "details": None,
+            },
         )
 
 
@@ -156,23 +177,16 @@ async def delet_by_id(id: int, session: AsyncSession = Depends(get_async_session
         stmt = delete(Product).where(Product.id == id)
         result: Result = await session.execute(stmt)
         if result.rowcount == 0:
-            raise HTTPException(
-                status_code=404,
-                detail={
-                    "status": "error",
-                    "data": None,
-                    "details": f"Product {id} dosen't exist!",
-                },
-            )
+            raise ValueError
         await session.commit()
         return {"status": "success", "data": None, "details": "Successful remove"}
-    except IntegrityError:
+    except ValueError:
         raise HTTPException(
-            status_code=500,
+            status_code=404,
             detail={
                 "status": "error",
                 "data": None,
-                "details": "IntegrityError",
+                "details": f"Product {id} dosen't exist!",
             },
         )
     except:

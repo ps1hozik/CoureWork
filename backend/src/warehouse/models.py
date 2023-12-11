@@ -21,7 +21,8 @@ class Warehouse(Base):
     address: Mapped[str] = mapped_column()
     count_of_employees: Mapped[int] = mapped_column(default=0)
     organization_id: Mapped[int] = mapped_column(ForeignKey("organizations.id"))
+    product_quantity: Mapped[int] = mapped_column(default=0)
 
     products: Mapped["Product"] = relationship(back_populates="warehouses")
     organizations: Mapped["Organization"] = relationship(back_populates="warehouses")
-    users: Mapped["User"] = relationship(back_populates="warehouses")
+    # users: Mapped["User"] = relationship(back_populates="warehouses")

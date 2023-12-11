@@ -22,5 +22,5 @@ class Organization(Base):
     count_of_warehouses: Mapped[int] = mapped_column(default=0)
     manager_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
 
-    users: Mapped["User"] = relationship("User", back_populates="organizations")
+    users: Mapped["User"] = relationship("User", foreign_keys=[manager_id])
     warehouses: Mapped["Warehouse"] = relationship(back_populates="organizations")

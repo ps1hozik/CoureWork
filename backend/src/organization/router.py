@@ -101,7 +101,7 @@ async def update(
 
 
 @router.get("/{id}")
-async def get(id: int, session: AsyncSession = Depends(get_async_session)):
+async def get_by_id(id: int, session: AsyncSession = Depends(get_async_session)):
     try:
         stmt = select(Organization).where(Organization.id == id)
         organization: Organization | None = await session.scalar(stmt)
@@ -115,6 +115,74 @@ async def get(id: int, session: AsyncSession = Depends(get_async_session)):
                 },
             )
         return {"status": "success", "data": organization, "details": None}
+    except:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "status": "error",
+                "data": None,
+                "details": None,
+            },
+        )
+
+
+@router.get("/get_by_code/{code}")
+async def get_by_code(code: str, session: AsyncSession = Depends(get_async_session)):
+    try:
+        stmt = select(Organization).where(Organization.code == code)
+        organization: Organization | None = await session.scalar(stmt)
+        if organization == None:
+            raise ValueError
+
+        return {"status": "success", "data": organization, "details": None}
+    except ValueError:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "status": "error",
+                "data": None,
+                "details": "Organozation dosen't exist",
+            },
+        )
+    except:
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "status": "error",
+                "data": None,
+                "details": None,
+            },
+        )
+
+
+@router.patch("/set_manager/{id}")
+async def set_manager(
+    id: int, user_id: int, session: AsyncSession = Depends(get_async_session)
+):
+    try:
+        stmt = select(Organization).where(Organization.id == id)
+        organization: Organization | None = await session.scalar(stmt)
+        if organization == None:
+            raise HTTPException(
+                status_code=404,
+                detail={
+                    "status": "error",
+                    "data": None,
+                    "details": f"Organization {id} dosen't exist!",
+                },
+            )
+        organization.manager_id = user_id
+        await session.commit()
+        return {"status": "success", "data": None, "details": None}
+    except IntegrityError:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "status": "error",
+                "data": None,
+                "details": "User not found",
+            },
+        )
     except:
         raise HTTPException(
             status_code=500,
