@@ -5,7 +5,39 @@ import Cookies from "universal-cookie";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
-const WarehouseBlock = ({ w_id, name, address, description, cookies }) => {
+const Head = () => {
+  const navigate = useNavigate();
+  return (
+    <Flex
+      bg="gray.50"
+      justify="space-between"
+      gap={30}
+      pl={10}
+      pr={10}
+      zIndex={1}
+      width="100%"
+    >
+      <Button
+        colorScheme="teal"
+        w="100%"
+        onClick={() => {
+          navigate("/warehouse_add");
+        }}
+      >
+        Добавить
+      </Button>
+    </Flex>
+  );
+};
+
+const WarehouseBlock = ({
+  w_id,
+  name,
+  address,
+  description,
+  cookies,
+  product_quantity,
+}) => {
   const navigate = useNavigate();
   const chose_warehouse = () => {
     cookies.set("warehouse_id", w_id);
@@ -29,7 +61,8 @@ const WarehouseBlock = ({ w_id, name, address, description, cookies }) => {
         <Text fontWeight="bold" fontSize={30}>
           {name}
         </Text>
-        <Text fontSize={15}>{address}</Text>
+        <Text fontSize={15}>Адрес: {address}</Text>
+        <Text fontSize={15}>Количество товаров: {product_quantity}</Text>
       </Box>
       <Textarea
         bg="gray.100"
@@ -55,8 +88,6 @@ const WarehouseBlock = ({ w_id, name, address, description, cookies }) => {
   );
 };
 
-const get_warehouses = () => {};
-
 export default function WarehouseList() {
   const [warehouses, setWarehouses] = useState([]);
   const cookies = new Cookies();
@@ -81,24 +112,28 @@ export default function WarehouseList() {
   }, [o_id]);
 
   return (
-    <Flex
-      bg="gray.100"
-      align="center"
-      justify="center"
-      flexWrap="wrap"
-      overflow="auto"
-      p={6}
-    >
-      {warehouses.map((warehouse) => (
-        <WarehouseBlock
-          key={warehouse.id}
-          w_id={warehouse.id}
-          name={warehouse.name}
-          address={warehouse.address}
-          description={warehouse.description}
-          cookies={cookies}
-        />
-      ))}
-    </Flex>
+    <>
+      <Head />
+      <Flex
+        bg="gray.100"
+        align="center"
+        justify="center"
+        flexWrap="wrap"
+        overflow="auto"
+        p={6}
+      >
+        {warehouses.map((warehouse) => (
+          <WarehouseBlock
+            key={warehouse.id}
+            w_id={warehouse.id}
+            name={warehouse.name}
+            address={warehouse.address}
+            description={warehouse.description}
+            product_quantity={warehouse.product_quantity}
+            cookies={cookies}
+          />
+        ))}
+      </Flex>
+    </>
   );
 }

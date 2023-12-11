@@ -15,7 +15,7 @@ import {
   PopoverBody,
 } from "@chakra-ui/react";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 
 export default function CardView({
@@ -29,6 +29,7 @@ export default function CardView({
   description,
   remove,
 }) {
+  const navigate = useNavigate();
   const cookies = new Cookies();
   const deleteProduct = () => {
     cookies.set("product_id", id);
@@ -44,9 +45,10 @@ export default function CardView({
       ml={10}
       p={6}
       mt={10}
-      maxWidth={360}
+      w="100%"
+      maxWidth={320}
     >
-      <Card bg="gray.100" p={4} roundedTop="md" mb={4}>
+      <Card bg="gray.100" p={4} roundedTop="md" mb={4} w="100%">
         <CardHeader>
           <Heading size="lg">{name}</Heading>
         </CardHeader>
@@ -94,12 +96,18 @@ export default function CardView({
         </CardBody>
       </Card>
 
-      <Flex maxWidth={360} w="100%">
-        <Link to={"/product_update"} className="link" style={{ width: "100%" }}>
-          <Button colorScheme="teal" w="full">
-            Изменить
-          </Button>
-        </Link>
+      <Flex w="100%">
+        <Button
+          colorScheme="teal"
+          w="full"
+          onClick={() => {
+            cookies.set("product_id", id);
+            console.log(`/product_update/${id}`);
+            navigate(`/product_update/${id}`);
+          }}
+        >
+          Изменить
+        </Button>
         <Button colorScheme="teal" ml={2} onClick={deleteProduct}>
           X
         </Button>

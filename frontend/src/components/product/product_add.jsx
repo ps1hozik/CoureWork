@@ -12,10 +12,12 @@ import {
 } from "@chakra-ui/react";
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router";
+import { useState } from "react";
 
-export default function ProductAdd({ text }) {
+export default function ProductAdd() {
   const navigate = useNavigate();
   const cookies = new Cookies();
+  const [error, setError] = useState(null);
   return (
     <Flex bg="gray.100" align="center" justify="center" p={10}>
       <Box bg="white" p={6} rounded="md" w={400}>
@@ -42,11 +44,12 @@ export default function ProductAdd({ text }) {
               })
               .then(function (data) {
                 if (data.status == "success") {
+                  console.log(data.status);
                   navigate("/product_get");
                 }
               })
               .catch(function (error) {
-                console.log(error, "error");
+                setError(error);
               });
           }}
         >
@@ -129,8 +132,9 @@ export default function ProductAdd({ text }) {
                 </FormControl>
 
                 <Button type="submit" colorScheme="teal" width="full">
-                  {text}
+                  Добавить
                 </Button>
+                {error && <div className="error">{error.message}</div>}
               </VStack>
             </form>
           )}

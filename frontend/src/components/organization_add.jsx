@@ -36,6 +36,24 @@ export default function OrganizationAdd() {
               })
               .then(function (data) {
                 if (data.status == "success") {
+                  fetch(
+                    `http://localhost:8000/auth/${cookies.get(
+                      "user_id"
+                    )}?org_id=${data.data.id}`,
+                    {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                    }
+                  );
+                  fetch(
+                    `http://localhost:8000/organization/set_manager/${
+                      data.data.id
+                    }?user_id=${cookies.get("user_id")}`,
+                    {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                    }
+                  );
                   cookies.set("organization_id", data.data.id);
                   navigate("/warehouse_add");
                 }
@@ -82,6 +100,62 @@ export default function OrganizationAdd() {
 
                 <Button type="submit" colorScheme="teal" width="full">
                   Создать
+                </Button>
+              </VStack>
+            </form>
+          )}
+        </Formik>
+        <Formik
+          initialValues={{
+            code: "",
+          }}
+          onSubmit={(values) => {
+            fetch(
+              `http://localhost:8000/organization/get_by_code/${values.code}`,
+              {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+              }
+            )
+              .then(function (response) {
+                return response.json();
+              })
+              .then(function (data) {
+                if (data.status == "success") {
+                  fetch(
+                    `http://localhost:8000/auth/${cookies.get(
+                      "user_id"
+                    )}?org_id=${data.data.id}`,
+                    {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                    }
+                  );
+                  cookies.set("organization_id", data.data.id);
+                  navigate("/warehouse_get");
+                }
+              })
+              .catch(function (error) {
+                console.log(error, "error");
+              });
+          }}
+        >
+          {({ handleSubmit }) => (
+            <form onSubmit={handleSubmit}>
+              <VStack spacing={4} align="flex-start">
+                <FormControl paddingTop={10}>
+                  <FormLabel htmlFor="code">Введите код организации</FormLabel>
+                  <Field
+                    as={Input}
+                    id="code"
+                    name="code"
+                    type="text"
+                    variant="filled"
+                  />
+                </FormControl>
+
+                <Button type="submit" colorScheme="teal" width="full">
+                  Войти
                 </Button>
               </VStack>
             </form>

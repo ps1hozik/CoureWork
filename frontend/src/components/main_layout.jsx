@@ -6,32 +6,46 @@ const MainLayout = ({ children }) => {
   const navigate = useNavigate();
   const signOut = () => {
     cookies.remove("name");
+    cookies.remove("user_id");
+    cookies.remove("organization_id");
+    cookies.remove("warehouse_id");
     navigate("/login");
   };
   const main_page = () => {
     navigate("/");
   };
   return (
-    <Box>
-      <Flex justify-content="space-between">
-        <VStack spacing={8} align="flex-start" bg="white" p={4}>
-          <Text fontSize="xl">{cookies.get("name")}</Text>
+    <Flex>
+      <VStack
+        spacing={8}
+        align="flex-start"
+        bg="white"
+        p={4}
+        position="fixed"
+        left={0}
+        top={0}
+        h="100vh"
+      >
+        <Text fontSize="xl">{cookies.get("name")}</Text>
 
-          <Button fontSize="md" colorScheme="teal" onClick={main_page} w={100}>
-            На главную
-          </Button>
-          <Button fontSize="md" onClick={signOut} w={100}>
-            Выйти
-          </Button>
-        </VStack>
+        <Button fontSize="md" colorScheme="teal" onClick={main_page} w={100}>
+          На главную
+        </Button>
+        <Button
+          fontSize="md"
+          onClick={signOut}
+          w={100}
+          position="fixed"
+          bottom={4}
+        >
+          Выйти
+        </Button>
+      </VStack>
 
-        <Box w="100%" h="100%">
-          {children}
-        </Box>
-      </Flex>
-
-      <Box position="fixed" bottom={4} left={4}></Box>
-    </Box>
+      <Box ml={100} w="100%">
+        {children}
+      </Box>
+    </Flex>
   );
 };
 
