@@ -14,7 +14,7 @@ import Cookies from "universal-cookie";
 
 import { useNavigate } from "react-router";
 
-export default function Login() {
+export default function Login({ setIsAuthenticated }) {
   const cookies = new Cookies();
   const navigate = useNavigate();
   const register = () => {
@@ -38,10 +38,17 @@ export default function Login() {
                 return response.json();
               })
               .then(function (data) {
-                cookies.set("name", data.data);
-
                 if (data.status == "success") {
-                  navigate("/organization_add");
+                  setIsAuthenticated(true);
+                  cookies.set("name", data.data.name);
+                  cookies.set("user_id", data.data.id);
+                  if (data.data.org_id) {
+                    cookies.set("organization_id", data.data.org_id);
+
+                    navigate("/warehouse_get");
+                  } else {
+                    navigate("/organization_add");
+                  }
                 }
               })
               .catch(function (error) {

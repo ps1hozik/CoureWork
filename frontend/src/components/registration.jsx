@@ -9,8 +9,12 @@ import {
   Input,
   VStack,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router";
+import Cookies from "universal-cookie";
 
-export default function Registration() {
+export default function Registration({ setIsAuthenticated }) {
+  const cookies = new Cookies();
+  const navigate = useNavigate();
   return (
     <Flex bg="gray.100" align="center" justify="center" h="100vh">
       <Box bg="white" p={6} rounded="md" w="50vh">
@@ -26,7 +30,28 @@ export default function Registration() {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(values, null, 2),
-            });
+            }).then(
+              fetch("http://localhost:8000/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values, null, 2),
+              })
+                .then(function (response) {
+                  return response.json();
+                })
+                .then(function (data) {
+                  if (data.status == "success") {
+                    setIsAuthenticated(true);
+                    cookies.set("name", data.data.name);
+                    cookies.set("user_id", data.data.id);
+                    navigate("/organization_add");
+                  }
+                })
+                .catch(function (error) {
+                  alert(error);
+                  console.log(error);
+                })
+            );
           }}
         >
           {({ handleSubmit, errors, touched }) => (
