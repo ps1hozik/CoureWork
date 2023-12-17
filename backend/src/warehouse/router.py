@@ -7,6 +7,8 @@ from database import get_async_session
 
 from .models import Warehouse
 from .schemas import WarehouseCreate, WarehouseUpdate
+from auth.models import User
+from warehouse_manager.utils import check_role
 
 router = APIRouter(
     prefix="/warehouse/{org_id}",
@@ -16,10 +18,12 @@ router = APIRouter(
 
 @router.post("/")
 async def create(
+    current_id: int,
     org_id: int,
     data: WarehouseCreate,
     session: AsyncSession = Depends(get_async_session),
 ):
+    await check_role(current_id, session)
     stmt = (
         select(Warehouse)
         .where(Warehouse.organization_id == org_id)
@@ -34,6 +38,17 @@ async def create(
     stmt = insert(Warehouse).values(**data.dict(), organization_id=org_id)
     await session.execute(stmt)
     await session.commit()
+    stmt = (
+        select(Warehouse)
+        .where(Warehouse.name == data.name)
+        .where(Warehouse.organization_id == org_id)
+    )
+    warehouse: Warehouse | None = await session.scalar(stmt)
+
+    stmt = select(User).where(User.id == current_id)
+    user: User | None = await session.scalar(stmt)
+    user.warehouse_id = warehouse.id
+    await session.commit()
     return {
         "status": "success",
         "data": None,
@@ -43,11 +58,13 @@ async def create(
 
 @router.patch("/{id}")
 async def update(
+    current_id: int,
     org_id: int,
     id: int,
     data: WarehouseUpdate,
     session: AsyncSession = Depends(get_async_session),
 ):
+    await check_role(current_id, session)
     stmt = (
         select(Warehouse)
         .where(Warehouse.organization_id == org_id)
@@ -86,8 +103,12 @@ async def update(
 
 @router.get("/{id}")
 async def get_by_id(
-    org_id: int, id: int, session: AsyncSession = Depends(get_async_session)
+    current_id: int,
+    org_id: int,
+    id: int,
+    session: AsyncSession = Depends(get_async_session),
 ):
+    await check_role(current_id, session)
     stmt = (
         select(Warehouse)
         .where(Warehouse.organization_id == org_id)
@@ -107,7 +128,12 @@ async def get_by_id(
 
 
 @router.get("/")
-async def get_all(org_id: int, session: AsyncSession = Depends(get_async_session)):
+async def get_all(
+    current_id: int,
+    org_id: int,
+    session: AsyncSession = Depends(get_async_session),
+):
+    await check_role(current_id, session)
     stmt = select(Warehouse).where(Warehouse.organization_id == org_id)
     result: Result = await session.execute(stmt)
     warehouses: List[Warehouse] | None = result.scalars().all()

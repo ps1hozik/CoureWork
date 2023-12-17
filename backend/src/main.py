@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from admin.router import router as admin_router
+from manager.router import router as manager_router
+from warehouse_manager.router import router as warehouse_manager_router
 from auth.router import router as auth_router
 from organization.router import router as organization_router
 from warehouse.router import router as warehouse_router
@@ -10,11 +13,23 @@ app = FastAPI()
 
 
 app.include_router(
+    router=admin_router,
+)
+
+app.include_router(
     router=auth_router,
 )
 
 app.include_router(
+    router=manager_router,
+)
+
+app.include_router(
     router=organization_router,
+)
+
+app.include_router(
+    router=warehouse_manager_router,
 )
 
 app.include_router(

@@ -14,6 +14,7 @@ class ProductCreate(BaseModel):
     price: Decimal
     total_quantity: int
     booked_quantity: Optional[int] = None
+    last_employee_id: int
 
 
 class ProductUpdate(BaseModel):
@@ -25,3 +26,4 @@ class ProductUpdate(BaseModel):
     total_quantity: Optional[int] = None
     booked_quantity: Optional[int] = None
     updated_at: datetime = datetime.utcnow()
+    last_employee_id: int
