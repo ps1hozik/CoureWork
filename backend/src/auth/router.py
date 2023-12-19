@@ -7,6 +7,7 @@ from database import get_async_session
 from .utils import get_password_hash, verify_password
 from .schemas import UserCreate, UserLogin
 from .models import User
+from admin.models import Role
 from organization.models import Organization
 from warehouse.models import Warehouse
 
@@ -47,17 +48,23 @@ async def login(data: UserLogin, session: AsyncSession = Depends(get_async_sessi
             status_code=400,
             detail=f"User dosen't exist!",
         )
-    if verify_password(data.password, user.hashed_password):
-        return {
-            "status": "success",
-            "data": {"name": user.name, "id": user.id, "org_id": user.organization_id},
-            "details": "Successful login",
-        }
-    else:
+    if not verify_password(data.password, user.hashed_password):
         raise HTTPException(
             status_code=404,
             detail=f"Incorrect login or password!",
         )
+    query = select(Role).where(Role.user_id == user.id)
+    role: Role | None = await session.scalar(query)
+    return {
+        "status": "success",
+        "data": {
+            "name": user.name,
+            "id": user.id,
+            "org_id": user.organization_id,
+            "role": role.name,
+        },
+        "details": "Successful login",
+    }
 
 
 @router.post("/set_organization/{id}/{code}")

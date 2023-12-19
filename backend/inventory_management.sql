@@ -65,7 +65,7 @@ CREATE INDEX products_manufacturer_index ON products (manufacturer);
 
 CREATE TABLE public.roles (
 	"id" serial NOT NULL,
-	"name" varchar(128) NOT NULL UNIQUE,
+	"name" varchar(128) NOT NULL,
 	"user_id" integer NOT NULL,
 	CONSTRAINT "roles_pk" PRIMARY KEY ("id")
 ) WITH (

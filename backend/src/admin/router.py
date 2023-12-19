@@ -1,7 +1,8 @@
 from fastapi import Depends, APIRouter, HTTPException
-from typing import List
+from typing import List, Tuple, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import Result
+from sqlalchemy import outerjoin
 from sqlalchemy import insert, select, delete
 from database import get_async_session
 
@@ -21,9 +22,11 @@ async def get_user(
     id: int, current_id: int, session: AsyncSession = Depends(get_async_session)
 ):
     await check_role(current_id, session)
-    stmt = select(User).where(User.id == id)
-    user: User | None = await session.scalar(stmt)
-    if user == None:
+    stmt = select(User, Role.name.label("role_name")).where(User.id == id)
+    stmt = stmt.outerjoin(Role, Role.user_id == User.id)
+    result = await session.execute(stmt)
+    user_role = result.fetchone()
+    if user_role == None:
         raise HTTPException(
             status_code=404,
             detail={
@@ -32,9 +35,19 @@ async def get_user(
                 "details": f"User {id} dosen't exist!",
             },
         )
+    user, role_name = user_role
+    user_dict = {
+        "id": user.id,
+        "name": user.name,
+        "login": user.login,
+        "post": user.post,
+        "organization_id": user.organization_id if user.organization_id else "null",
+        "warehouse_id": user.warehouse_id if user.warehouse_id else "null",
+        "role_name": role_name if role_name else "null",
+    }
     return {
         "status": "success",
-        "data": user,
+        "data": user_dict,
         "details": None,
     }
 
@@ -44,8 +57,9 @@ async def get_all_users(
     current_id: int, session: AsyncSession = Depends(get_async_session)
 ):
     await check_role(current_id, session)
-    stmt = select(User)
-    users: List[User] | None = await session.scalars(stmt)
+    stmt = select(User, Role.name.label("role_name"))
+    stmt = stmt.outerjoin(Role, Role.user_id == User.id)
+    users = await session.execute(stmt)
     if users == None:
         raise HTTPException(
             status_code=404,
@@ -55,9 +69,21 @@ async def get_all_users(
                 "details": "Users dosen't exist!",
             },
         )
+    user_dicts = []
+    for user, role_name in users:
+        user_dict = {
+            "id": user.id,
+            "name": user.name,
+            "login": user.login,
+            "post": user.post,
+            "organization_id": user.organization_id if user.organization_id else "null",
+            "warehouse_id": user.warehouse_id if user.warehouse_id else "null",
+            "role_name": role_name if role_name else "null",
+        }
+        user_dicts.append(user_dict)
     return {
         "status": "success",
-        "data": users.all(),
+        "data": {"users": user_dicts, "roles": roles},
         "details": None,
     }
 
