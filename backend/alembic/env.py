@@ -7,9 +7,9 @@ from alembic import context
 
 import os
 
-# import sys
+import sys
 
-# sys.path.append(os.path.join(sys.path[0], "src"))
+sys.path.append(os.path.join(sys.path[0], "src"))
 
 from src.database import Base, DATABASE_URL
 
