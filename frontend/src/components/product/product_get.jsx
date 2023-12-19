@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Flex, Button } from "@chakra-ui/react";
+import { Flex, Button, Select } from "@chakra-ui/react";
 
 import { Link } from "react-router-dom";
 
@@ -9,7 +9,41 @@ import TableView from "./table_view";
 import React, { useState, useEffect } from "react";
 import Cookies from "universal-cookie";
 
-const Head = ({ viewB, setViewB }) => {
+const Head = ({
+  setViewB,
+  manufacturers,
+  setManufacturers,
+  w_id,
+  setProducts,
+}) => {
+  const filter_product = (e) => {
+    var manufacturer = e.target.value;
+    if (!manufacturer) {
+      manufacturer = "all";
+    }
+    console.log(manufacturer);
+    fetch(
+      `http://localhost:8000/product/${w_id}/get_by_manufacturer/${manufacturer}`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      }
+    )
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        console.log(data);
+        if (data.status === "success") {
+          setProducts(data.data.products);
+          setManufacturers(data.data.manufacturers);
+        }
+      })
+      .catch(function (error) {
+        console.log(error, "error");
+      });
+  };
+
   const [view, setView] = useState("Вид: Таблица");
 
   const handleChangeView = () => {
@@ -31,17 +65,45 @@ const Head = ({ viewB, setViewB }) => {
       zIndex={1}
       width="100%"
     >
-      <Link to={"/product_add"} style={{ margin: 4 }}>
+      <Link to={"/product_add"} style={{ margin: 4, width: "100%" }}>
         <Button colorScheme="teal" w="100%">
           Добавить
         </Button>
       </Link>
-      <Link to={"/warehouse_get"} style={{ margin: 4 }}>
-        <Button colorScheme="teal" w="100%">
+      <Link to={"/warehouse_get"} style={{ margin: 4, width: "100%" }}>
+        <Button
+          colorScheme="teal"
+          w="100%"
+          onClick={() => {
+            na;
+          }}
+        >
           Склады
         </Button>
       </Link>
-      <Button colorScheme="teal" m={1} onClick={handleChangeView}>
+      <Select
+        placeholder="Все"
+        colorScheme="teal"
+        variant="filled"
+        w="50%"
+        p={1}
+        minWidth={120}
+        onChange={filter_product}
+      >
+        {manufacturers.map((manufacturer, i) => (
+          <option key={i} value={manufacturer}>
+            {manufacturer}
+          </option>
+        ))}
+      </Select>
+      <Button
+        colorScheme="teal"
+        m={1}
+        onClick={handleChangeView}
+        w="30%"
+        minWidth={120}
+        p={4}
+      >
         {view}
       </Button>
     </Flex>
@@ -50,6 +112,7 @@ const Head = ({ viewB, setViewB }) => {
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
+  const [manufacturers, setManufacturers] = useState([]);
   const cookies = new Cookies();
 
   const w_id = cookies.get("warehouse_id");
@@ -82,7 +145,9 @@ export default function ProductList() {
       })
       .then(function (data) {
         if (data.status === "success") {
-          setProducts(data.data);
+          console.log(data.data.products);
+          setProducts(data.data.products);
+          setManufacturers(data.data.manufacturers);
         }
       })
       .catch(function (error) {
@@ -119,7 +184,13 @@ export default function ProductList() {
 
   return (
     <>
-      <Head viewB={viewB} setViewB={setViewB} />
+      <Head
+        setViewB={setViewB}
+        w_id={w_id}
+        setProducts={setProducts}
+        manufacturers={manufacturers}
+        setManufacturers={setManufacturers}
+      />
       <Flex
         bg="gray.100"
         align="center"
