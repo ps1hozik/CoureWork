@@ -5,5 +5,6 @@ This is a project for my coursework, which aimed to develop a versatile database
 Back-end:  
 -Python: FastAPI, SQLAlchemy, Alembic  
 -DataBase: PostgreSQL
+
 Front-end:
 -JavaScript: React + Vite
